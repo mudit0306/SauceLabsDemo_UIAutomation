@@ -59,7 +59,7 @@ Prerequisites
 3.	Browser Driver: Download the WebDriver for the browser you plan to test (e.g., ChromeDriver for Chrome).
 Installation
 1.	Clone the repository:
-git clone https://github.com/
+	git clone https://github.com/mudit0306/SauceLabsDemo_UIAutomation.git
 
 Build the project:
 gradle build
