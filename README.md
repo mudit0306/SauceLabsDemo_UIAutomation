@@ -22,6 +22,13 @@ Technologies Used
 •	Selenium: WebDriver for browser automation.
 •	Extent Reports: Library for generating test reports.
 
+Additional Important features -
+•	Followed POM
+•	Added Fluent Interface tests to chain the method calls, making tests less verbose and more readable
+•	Added Screenshot method to store attach screenshots to Extent reports. 
+
+Added Screenshot method
+
 Project Structure
 LeanTechSauceLabsQATask/
 ├── src/
