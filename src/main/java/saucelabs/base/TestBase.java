@@ -1,80 +1,59 @@
 package saucelabs.base;
 
-import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import saucelabs.ExtentManagerUtils.ExtentManager;
+import saucelabs.commons.CommonUtils;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Properties;
 
 public class TestBase {
     public static Properties prop;
-    public static WebDriver driver;
-    static ExtentTest test;
-    static ExtentReports extent;
 
-    String currentDir = System.getProperty("user.dir");
+    // ThreadLocal is used for thread safety, we can manage WebDriver instances effectively in parallel test execution.
+    public static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
-    public static void initializeDriver(){
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        //More cookies can be set as and when we go forward in our testing
-
-        driver.get(prop.getProperty("url"));
-
-    }
-
-
-    public TestBase(){
+    public TestBase() {
         try {
             prop = new Properties();
-            FileInputStream ip = new FileInputStream(System.getProperty("user.dir")+ "/src/main/java/saucelabs/config/config.properties");
+            FileInputStream ip = new FileInputStream(System.getProperty("user.dir") + "/src/main/java/saucelabs/config/config.properties");
             prop.load(ip);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void setupExtentReport(String testName) throws IOException {
-
-        extent = new ExtentReports();
-        String folderPath = currentDir+"/target/ExtentReports";
-
-        File folder = new File(folderPath);
-        if(!folder.exists())
-             folder.mkdirs();
-
-        ExtentSparkReporter spark = new ExtentSparkReporter(folderPath+"/"+testName+"_ExtentTestReport.html");
-
-        final File CONF = new File("extentconfig.json");
-        spark.loadJSONConfig(CONF);
-        extent.attachReporter(spark);
-        test = extent.createTest("Select and Checkout Test").assignAuthor("Mudit gaur");
-
+    @BeforeClass
+    public static void setup() {
+        driver.set(new ChromeDriver());
+        driver.get().manage().window().maximize();
+        driver.get().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
 
-    public void addInfoLog(String logMessage){
-        test.log(Status.INFO,logMessage);
-
+    public static WebDriver getDriver() {
+        return driver.get();
     }
 
-    public void addPassLog(String logMessage){
-        test.log(Status.PASS,logMessage);
-
+    @AfterMethod
+    public static void captureAndAddScreenshot() throws IOException {
+        String screenshotPath = CommonUtils.takeScreenShot(getDriver());
+        ExtentTest test = ExtentManager.getTest();
+        test.log(Status.INFO, "Screenshot:",
+                MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
     }
-    public void flushExtentReport(){
-        test.addScreenCaptureFromPath(currentDir + "/screenshots/test.png");
-        extent.flush();
+
+    @AfterClass
+    public static void tearDownDriver() {
+        getDriver().close();
     }
 
 }

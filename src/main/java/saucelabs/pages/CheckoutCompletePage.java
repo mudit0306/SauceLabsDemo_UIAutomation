@@ -16,8 +16,8 @@ public class CheckoutCompletePage extends TestBase {
     @FindBy(className="title")
     WebElement checkoutCompletePageTitle;
 
-    public CheckoutCompletePage(){
-        PageFactory.initElements(driver, this);
+    public CheckoutCompletePage() {
+        PageFactory.initElements(driver.get(), this);
     }
 
     public String getCheckoutcompleteMessage(){

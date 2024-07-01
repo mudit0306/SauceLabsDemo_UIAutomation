@@ -1,35 +1,25 @@
 package saucelabs;
 
-import org.junit.jupiter.api.*;
-import saucelabs.commons.CommonUtils;
-import saucelabs.base.TestBase;
-import saucelabs.pages.*;
 
-import java.io.IOException;
+import org.testng.Assert;
+import org.testng.annotations.*;
+import saucelabs.ExtentManagerUtils.ExtentManager;
+import saucelabs.base.TestBase;
+import saucelabs.pages.LoginPage;
 
 public class LoginTests extends TestBase {
-    LoginPage loginPage ;
+    LoginPage loginPage;
 
-    @BeforeEach
-    public void setup(TestInfo testInfo) throws IOException {
-        initializeDriver();
-        loginPage= new LoginPage();
-        setupExtentReport(testInfo.getDisplayName());
+    @BeforeClass
+    public void testSetup() {
+        loginPage = new LoginPage();
     }
 
     @Test
-    public void SuccessfulLoginTest(){
+    public void SuccessfulLoginTest() {
         loginPage.login();
-
-        Assertions.assertEquals(prop.getProperty("home_page_title"), driver.getTitle());
-
-        addPassLog("User is able to Login and see the Home page on Sauce Labs website");
+        Assert.assertEquals(prop.getProperty("home_page_title"), driver.get().getTitle());
+        ExtentManager.getTest().pass("User is able to Login and see the Home page on Sauce Labs website");
     }
 
-    @AfterEach
-    public void tearDown() throws IOException {
-        CommonUtils.takeScreenShot(driver); ;
-        flushExtentReport();
-        driver.close();
-    }
 }
