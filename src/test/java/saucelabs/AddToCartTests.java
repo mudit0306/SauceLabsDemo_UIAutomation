@@ -1,41 +1,54 @@
 package saucelabs;
 
-import org.junit.jupiter.api.*;
-import saucelabs.commons.CommonUtils;
+import org.testng.Assert;
+import org.testng.annotations.*;
+import saucelabs.ExtentManagerUtils.ExtentManager;
 import saucelabs.base.TestBase;
-import saucelabs.pages.*;
-
-import java.io.IOException;
+import saucelabs.pages.HomePage;
+import saucelabs.pages.LoginPage;
+import saucelabs.pages.YourCartPage;
 
 public class AddToCartTests extends TestBase {
-    LoginPage loginPage ;
+    LoginPage loginPage;
     HomePage homePage;
     YourCartPage yourCartPage;
 
-    @BeforeEach
-    public void setup(TestInfo testInfo) throws IOException {
-        initializeDriver();
-        loginPage= new LoginPage();
+    @BeforeClass
+    public void testSetup() {
+        loginPage = new LoginPage();
         homePage = new HomePage();
         yourCartPage = new YourCartPage();
-        setupExtentReport(testInfo.getDisplayName());
+    }
+
+
+    @Test
+    public void validateAddToCartWithBudgetLimit30() {
+        loginPage.login();
+        ExtentManager.getTest().info("Going to Select items on page with Limit - $30");
+        int total = homePage.selectItemsOnPage(30f);
+        Assert.assertTrue(homePage.validateCartItems(total), "Cart Items don't match with Total items added");
+        yourCartPage.removeAllItemsFromCart();
+        ExtentManager.getTest().pass("Total Items in the cart match with items added on home page");
+        ExtentManager.getTest().pass("Total Items in the cart match with items added on home page");
+
     }
 
     @Test
-    public void validateAddToCartTest(){
+    public void validateAddToCartTest() {
         loginPage.login();
 
         // Taking 3 items as per the requirement
         homePage.selectItemsOnPage(3);
 
-        Assertions.assertTrue(homePage.validateCartItems(3),"Cart Items don't match with Total items added");
+        Assert.assertTrue(homePage.validateCartItems(3), "Cart Items don't match with Total items added");
+        yourCartPage.removeAllItemsFromCart();
 
-        addPassLog("Total Items in the cart match with items added on home page");
+        ExtentManager.getTest().pass("Total Items in the cart match with items added on home page");
 
     }
 
     @Test
-    public void validateAddToCartWithRemoveItemsTest(){
+    public void validateAddToCartWithRemoveItemsTest() {
         loginPage.login();
 
         homePage.selectItemsOnPage(3)
@@ -45,16 +58,11 @@ public class AddToCartTests extends TestBase {
                 .clickContinueShoppingButton();
 
         homePage.selectItemsOnPage(3);
-        Assertions.assertTrue(homePage.validateCartItems(3),"Cart Items don't match with Total items added");
+        Assert.assertTrue(homePage.validateCartItems(3), "Cart Items don't match with Total items added");
+        yourCartPage.removeAllItemsFromCart();
 
-        addPassLog("Total Items in the cart match with items added on home page");
+        ExtentManager.getTest().pass("Total Items in the cart match with items added on home page");
 
     }
 
-    @AfterEach
-    public void tearDown() throws IOException {
-        CommonUtils.takeScreenShot(driver); ;
-        flushExtentReport();
-        driver.close();
-    }
 }

@@ -3,6 +3,7 @@ package saucelabs.pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import saucelabs.ExtentManagerUtils.ExtentManager;
 import saucelabs.base.TestBase;
 
 import java.util.ArrayList;
@@ -35,12 +36,12 @@ public class CheckoutOverviewPage extends TestBase {
         for(WebElement inventory : selectedInventoriesList) {
             inventoriesNameListCheckoutPage.add(inventory.getText());
         }
-        addInfoLog("Captured Details of Selected Items from Checkout page");
+        ExtentManager.getTest().info("Captured Details of Selected Items from Checkout page");
 
     }
 
     public CheckoutOverviewPage(){
-        PageFactory.initElements(driver, this);
+        PageFactory.initElements(driver.get(), this);
     }
 
     public Float getExpectedPriceOfItemsInclTaxes(){
@@ -51,7 +52,8 @@ public class CheckoutOverviewPage extends TestBase {
         }
         String totalTax = totalTaxOnItems.getText().split("\\$")[1];
         Float expectedCalculatedPrice = subTotal+Float.parseFloat(totalTax);
-        addInfoLog("Expected Calculated Price "+expectedCalculatedPrice);
+        ExtentManager.getTest().info("Expected Calculated Price: "+expectedCalculatedPrice);
+
         return expectedCalculatedPrice;
 
     }
@@ -59,7 +61,7 @@ public class CheckoutOverviewPage extends TestBase {
     public Float getActualTotalFromCheckoutPage(){
 
         String subTotal = totalPriceOfItems.getText().split("\\$")[1];
-        addInfoLog("Actual Price on Checkout Page " +subTotal);
+        ExtentManager.getTest().info("Actual Price on Checkout Page " +subTotal);
         return Float.parseFloat(subTotal);
     }
 }

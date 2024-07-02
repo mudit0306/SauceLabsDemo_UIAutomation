@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<!--        Cofigure the listener in testng.xml file to ensure that it is applied to all the test classes. -->
+<!--        We don't need to use the @Listeners annotation in every test class. -->
+<suite name="Checkout Flow Test Suite" thread-count="4" parallel="classes">
+    <listeners>
+        <listener class-name="saucelabs.ExtentManagerUtils.ExtentTestNGITestListener"/>
+    </listeners>
+    <test name="SauceLabs CheckoutFlow Tests">
+        <classes>
+            <class name="saucelabs.AddToCartTests"/>
+            <class name="saucelabs.LoginTests"/>
+            <class name="saucelabs.CheckoutCompleteE2ETests"/>
+            <class name="saucelabs.CheckoutValidationTests"/>
+        </classes>
+    </test>
+</suite>

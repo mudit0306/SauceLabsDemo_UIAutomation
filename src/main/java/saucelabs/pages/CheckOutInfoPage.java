@@ -19,7 +19,7 @@ public class CheckOutInfoPage extends TestBase {
     WebElement continueCheckout;
 
     public CheckOutInfoPage(){
-        PageFactory.initElements(driver, this);
+        PageFactory.initElements(driver.get(), this);
 
     }
     public void fillCheckoutInformationAndClickNext(){

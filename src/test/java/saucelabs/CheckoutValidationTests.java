@@ -1,33 +1,33 @@
 package saucelabs;
 
-import org.junit.jupiter.api.*;
-import saucelabs.commons.CommonUtils;
+import com.aventstack.extentreports.ExtentReports;
+import org.testng.Assert;
+import org.testng.annotations.*;
+import saucelabs.ExtentManagerUtils.ExtentManager;
 import saucelabs.base.TestBase;
 import saucelabs.pages.*;
 
-import java.io.IOException;
-
 public class CheckoutValidationTests extends TestBase {
 
-    LoginPage loginPage ;
+    LoginPage loginPage;
     HomePage homePage;
     YourCartPage yourCartPage;
     CheckOutInfoPage checkOutInfoPage;
-    CheckoutOverviewPage checkoutOverviewPage ;
+    CheckoutOverviewPage checkoutOverviewPage;
+    ExtentReports extent;
 
-    @BeforeEach
-    public void setup(TestInfo testInfo) throws IOException {
-        initializeDriver();
-        loginPage= new LoginPage();
+    @BeforeClass
+    public void testSetup() {
+        loginPage = new LoginPage();
         homePage = new HomePage();
         yourCartPage = new YourCartPage();
-        checkOutInfoPage= new CheckOutInfoPage();
+        checkOutInfoPage = new CheckOutInfoPage();
         checkoutOverviewPage = new CheckoutOverviewPage();
-        setupExtentReport(testInfo.getDisplayName());
+
     }
 
     @Test
-    public void validateTotalPriceOfItemsOnCheckoutTest(){
+    public void validateTotalPriceOfItemsOnCheckoutTest() {
         loginPage.login();
 
         homePage.selectItemsOnPage(3).clickOnShoppingCart();
@@ -36,14 +36,13 @@ public class CheckoutValidationTests extends TestBase {
 
         checkOutInfoPage.fillCheckoutInformationAndClickNext();
 
-        Assertions.assertEquals(checkoutOverviewPage.getExpectedPriceOfItemsInclTaxes(), checkoutOverviewPage.getActualTotalFromCheckoutPage());
-        addPassLog("Total Price of Cart Items match with Price displayed on Check out page");
+        Assert.assertEquals(checkoutOverviewPage.getExpectedPriceOfItemsInclTaxes(), checkoutOverviewPage.getActualTotalFromCheckoutPage(), "Price Validation Failed");
 
-
+        ExtentManager.getTest().pass("Total Price of Cart Items match with Price displayed on Check out page");
     }
 
     @Test
-    public void validateAddedItemsDetailsOnCheckoutTest(){
+    public void validateAddedItemsDetailsOnCheckoutTest() {
         loginPage.login();
 
         homePage.selectItemsOnPage(3).
@@ -56,14 +55,8 @@ public class CheckoutValidationTests extends TestBase {
 
         checkoutOverviewPage.captureSelectedItemsFromCheckoutPage();
 
-        Assertions.assertEquals(CheckoutOverviewPage.inventoriesNameListCheckoutPage, HomePage.inventoryItemsNamesList);
-        addPassLog("Details of added Items in the Cart match with Items ready for Checkout");
+        Assert.assertEquals(CheckoutOverviewPage.inventoriesNameListCheckoutPage, HomePage.inventoryItemsNamesList);
+        ExtentManager.getTest().pass("Details of added Items in the Cart match with Items ready for Checkout");
     }
 
-    @AfterEach
-    public void tearDown() throws IOException {
-        CommonUtils.takeScreenShot(driver); ;
-        flushExtentReport();
-        driver.close();
-    }
 }
